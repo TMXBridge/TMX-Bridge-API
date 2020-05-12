@@ -1,12 +1,12 @@
-#TMX Bridge Appliance API
+# TMX Bridge Appliance API
 The TMX Bridge API is a series of appliance endpoints that allow you to control T-Max connected devices using a T-Max Manager Pro or the T-Max Manager G2. At the moment, it runs on the Raspberry Pi 3 B hardware. You should be able to burn the image to a micro SD, configure the network and go. 
 
 Get more information about the TMX Bridge tmxbridge.com 
 
-##Network Setup
+## Network Setup
 The first part of setup is locating the device on your network. Be careful as you make changes because you can quickly create a mess of work for yourself if you make an error here and get locked out or brick the device. This will require some basic knowledge of Linux.
 
-##SSH
+## SSH
 
 	user: pi
 	pwd: tmx
@@ -47,10 +47,10 @@ Comment the dhcp entry and uncomment the static entry, adding the IP address, ne
 	        gateway 192.168.1.1
 	       dns-nameservers 1.1.1.1 8.8.8.8
 
-####Returns:
+#### Returns:
     Should reboot on success.
 
-###Local DNS and SSL
+### Local DNS and SSL
 Modern browsers will complain if you try to connect to a local IP address over http. The TMX Bridge Appliance includes an SSL certificate pre-installed on Apache for the tmxbridge.net domain.
 
 Getting it working on your network is easy.
@@ -59,7 +59,7 @@ Once you set the IP address on the device, add an entry in your local DNS or hos
 
 Let's say you named the device 'demo.tmxbridge.net' in your local DNS. From your cloud based app, you can use jQuery Ajax calls to query the TMX endpoints. We've handled the SSL and cross-origin issues for you.
 
-####Code Example:
+#### Code Example:
 
     $.ajax({
         type: "GET",
@@ -72,21 +72,21 @@ Let's say you named the device 'demo.tmxbridge.net' in your local DNS. From your
         }
     });
 
-##Coding Endpoints
+## Coding Endpoints
 These endpoints allow you to make connections, send commands and query devices. All code examples provided are in jQuery.
 
-###Endpoint: /service/ports/
+### Endpoint: /service/ports/
 
 This allows to discover the USB-Serial ports on the appliance. Your code can poll this endpoint to detect if the T-Max connection changes.
 
-####Parms: GET
+#### Parms: GET
     None Required
 
-####Returns:
+#### Returns:
     status
     results
 
-####Code Example:
+#### Code Example:
 
     $.ajax({
         type: "GET",
@@ -99,11 +99,11 @@ This allows to discover the USB-Serial ports on the appliance. Your code can pol
         }
     })
 
-###Endpoint: /service/device/on/
+### Endpoint: /service/device/on/
 
 This allows you to turn a T-Max device on. It supports beds with and without facial tanners.
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
         b //this is the bed number
@@ -113,10 +113,10 @@ This allows you to turn a T-Max device on. It supports beds with and without fac
         s //start bulbs option. 0=off, 1=on (default), 129=facials on
         d //delay countdown time before the bed turns on
 
-####Returns:
+#### Returns:
     status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
@@ -137,19 +137,19 @@ This allows you to turn a T-Max device on. It supports beds with and without fac
         }
     })
 
-###Endpoint: /service/device/off/
+### Endpoint: /service/device/off/
 
 This allows you to turn a T-Max device off.
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
         b //this is the bed number
 
-####Returns:
+#### Returns:
     status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
@@ -167,15 +167,15 @@ This allows you to turn a T-Max device off.
         }
     })
 
-###Endpoint: /service/device/status/
+### Endpoint: /service/device/status/
 
 This allows you to see the status of all connected devices. It should return 2 arrays of data: "device_status" and "device_time".
 
-####device_time
+#### device_time
 
 The device_time array shows remaining time for each device no matter what status mode it is currently in. For instance, if a bed is in "cool down" mode, this time will indicate how long until the bed is ready to use again.
 
-####device_status
+#### device_status
 
 The device_status array lists status for 128 connected devices. NOTE: You will see "Ready" for all connected beds that are ready to use AND for all empty device addresses. You should keep a local array of connected devices for cross reference.
 
@@ -194,16 +194,16 @@ The device_status array lists status for 128 connected devices. NOTE: You will s
         94 => "Max Time Error"
     )
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
 
-####Returns:
+#### Returns:
     status
     device_time
     device_status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
@@ -236,7 +236,7 @@ The device_status array lists status for 128 connected devices. NOTE: You will s
         }
     })
 
-###Endpoint: /service/device/parm/
+### Endpoint: /service/device/parm/
 
 This allows you to select a specific T-Max parameter to monitor. Use the "q" parameter to specify which data to view. Then you can list the data using the /service/device/parms/ endpoint.
 
@@ -253,15 +253,15 @@ This allows you to select a specific T-Max parameter to monitor. Use the "q" par
     10  Manual Lockout Option
     13  Cool Down Minutes Option
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
         q //this is the query parameter
 
-####Returns:
+#### Returns:
     status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
@@ -279,19 +279,19 @@ This allows you to select a specific T-Max parameter to monitor. Use the "q" par
         }
     })
 
-###Endpoint: /service/device/parms/
+### Endpoint: /service/device/parms/
 
 Once you specify the parameter you want to retrieve using the /service/device/parm/ endpoint, you can query this to get an array of values for each device. For instance, if you want to track the lamp hours for each bed.
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
 
-####Returns:
+#### Returns:
     status
     device_status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
@@ -319,18 +319,18 @@ Once you specify the parameter you want to retrieve using the /service/device/pa
         }
     })
 
-###Endpoint: /service/device/rescan/
+### Endpoint: /service/device/rescan/
 
 This instructs the connected T-Max Manager to rescan the devices.
 
-####Parms: GET
+#### Parms: GET
     Required:
         p //this is the port name (e.g. /dev/ttyUSB0)
 
-####Returns:
+#### Returns:
     status
 
-####Code Example:
+#### Code Example:
 
     var parm = {
         "p" : "/dev/ttyUSB0", //the port name
