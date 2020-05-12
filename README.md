@@ -47,8 +47,7 @@ Comment the dhcp entry and uncomment the static entry, adding the IP address, ne
 	        gateway 192.168.1.1
 	       dns-nameservers 1.1.1.1 8.8.8.8
 
-#### Returns:
-    Should reboot on success.
+Reboot the device
 
 ### Local DNS and SSL
 Modern browsers will complain if you try to connect to a local IP address over http. The TMX Bridge Appliance includes an SSL certificate pre-installed on Apache for the tmxbridge.net domain.
